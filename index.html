@@ -3,127 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keerana Shop - Login</title>
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Setting the default font for the page */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
+    <title>Keerana Shop - Dashboard</title>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
 
-    <!-- Main container for the login page -->
-    <div class="min-h-screen flex flex-col items-center justify-center bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/e2e8f0/334155?text=Grocery+Background');">
-        
-        <!-- Login Card -->
-        <div class="bg-white/90 backdrop-blur-sm p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
-            
-            <!-- Header Section -->
-            <div class="text-center mb-8">
-                <h1 class="text-3xl sm:text-4xl font-bold text-green-700">Keerana Shop</h1>
-                <p class="text-gray-600 mt-2">Welcome! Please log in to continue.</p>
+    <!-- Main Application Layout -->
+    <div>
+
+        <!-- Main Content Area -->
+        <main>
+            <!-- Header -->
+            <header>
+                <div>
+                    <h1>Shop Dashboard</h1>
+                    <p>Manage products, customers, and billing.</p>
+                </div>
+                <button>Logout</button>
+            </header>
+
+            <!-- Grid for main layout -->
+            <div>
+                
+                <!-- Left/Center Column: Product & Customer Management -->
+                <div>
+
+                    <!-- Add New Item Section -->
+                    <div>
+                        <h2>Add a New Item</h2>
+                        <form id="addItemForm">
+                            <input type="text" id="newItemName" placeholder="Item Name" required>
+                            <input type="number" id="newItemPrice" placeholder="Price (₹)" min="0" step="0.01" required>
+                            <input type="text" id="newItemWeight" placeholder="Weight/Unit (e.g., 1kg, 1pc)" required>
+                            <button type="submit">Add Item</button>
+                        </form>
+                    </div>
+
+                    <!-- Product Management List -->
+                    <div>
+                        <h2>Manage Products</h2>
+                        <div id="productList">
+                            <!-- Product items will be dynamically inserted here by JavaScript -->
+                        </div>
+                    </div>
+                     <!-- Customer Tracking Section -->
+                    <div>
+                        <h2>Customer Records</h2>
+                        <div>
+                             <input type="text" placeholder="Search customer by name or phone...">
+                             <button>Search</button>
+                        </div>
+                        <div>
+                            Customer details and previous records will be displayed here.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Billing -->
+                <aside>
+                    <h2>Current Bill</h2>
+                    <div id="billItems">
+                        <p>No items added yet.</p>
+                    </div>
+                    <div>
+                        <div>
+                            <span>Total</span>
+                            <span id="billTotal">₹0.00</span>
+                        </div>
+                        <button id="generateBillBtn" disabled>
+                            Generate Bill
+                        </button>
+                    </div>
+                </aside>
+
             </div>
-
-            <!-- Login Form -->
-            <form id="loginForm" novalidate>
-                <!-- User ID Input -->
-                <div class="mb-5">
-                    <label for="userId" class="block text-gray-700 font-medium mb-2">User ID</label>
-                    <input 
-                        type="text" 
-                        id="userId" 
-                        name="userId" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200" 
-                        placeholder="Enter your user ID"
-                        required>
-                </div>
-
-                <!-- Password Input -->
-                <div class="mb-6">
-                    <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200" 
-                        placeholder="••••••••"
-                        required>
-                </div>
-
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1">
-                    Log In
-                </button>
-            </form>
-
-            <!-- Message area for success or error feedback -->
-            <div id="messageArea" class="mt-5 text-center font-medium text-sm"></div>
-
-        </div>
-
-         <!-- Footer note -->
-        <p class="text-center text-sm text-gray-600 mt-8">
-            &copy; 2025 Keerana Shop. All Rights Reserved.
-        </p>
+        </main>
     </div>
 
-    <script>
-        // Get references to the HTML elements
-        const loginForm = document.getElementById('loginForm');
-        const messageArea = document.getElementById('messageArea');
+    <!-- Bill Modal (initially hidden) -->
+    <div id="billModal">
+        <div>
+            <h2>Bill Generated!</h2>
+            <div id="modalBillDetails"></div>
+            <p id="modalTotal"></p>
+            <button id="closeModalBtn">Close</button>
+        </div>
+    </div>
 
-        // Add an event listener for the form submission
-        loginForm.addEventListener('submit', function(event) {
-            // Prevent the form from submitting the default way
-            event.preventDefault(); 
-
-            // Get the values from the input fields
-            const userId = document.getElementById('userId').value;
-            const password = document.getElementById('password').value;
-
-            // Clear any previous messages and styling
-            messageArea.innerHTML = '';
-            messageArea.className = 'mt-5 text-center font-medium text-sm';
-
-            // --- Basic Client-Side Validation ---
-            if (!userId || !password) {
-                displayMessage('Please enter both User ID and Password.', 'error');
-                return;
-            }
-
-            // --- Dummy Authentication Logic ---
-            // In a real-world app, you would send this data to a server for verification.
-            // For now, we'll use a hardcoded user ID and password for demonstration.
-            if (userId === 'admin' && password === 'password123') {
-                displayMessage('Login successful! Redirecting to dashboard...', 'success');
-                // In the next step, we would redirect the user to the main application page.
-                // For example: setTimeout(() => { window.location.href = '/dashboard.html'; }, 1500);
-            } else {
-                displayMessage('Invalid User ID or Password. Please try again.', 'error');
-            }
-        });
-
-        /**
-         * A helper function to display messages to the user.
-         * @param {string} message - The message to display.
-         * @param {string} type - The type of message ('success' or 'error').
-         */
-        function displayMessage(message, type) {
-            messageArea.textContent = message;
-            if (type === 'success') {
-                messageArea.classList.add('text-green-600');
-            } else {
-                messageArea.classList.add('text-red-500');
-            }
-        }
-    </script>
 </body>
 </html>
+
 
